@@ -1,0 +1,13 @@
+﻿@model ITI_Project.DAL.Models.User
+@using ITI_Project.DAL.Models.Enums
+
+<div class="container mt-4">
+    <h2>Add User</h2>
+
+    <form asp-action="Create" method="post" class="card p-4 shadow-sm">
+        <partial name="_UserForm" model="Model" />
+    </form>
+</div>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,75 @@
+# Build outputs
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# JetBrains Rider
+.idea/
+*.sln.iml
+
+# NuGet packages (restore automatically)
+packages/
+*.nupkg
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# dotnet tools
+.dotnet-tools/
+
+# Test results
+TestResult*/
+*.trx
+*.TestResult.xml
+coverage*.xml
+*.coverage
+*.coveragexml
+
+# Publish outputs
+publish/
+*.Publish.xml
+
+# IIS Express
+iisexpress/
+App_Data/
+
+# User secrets & local settings
+secrets.json
+*.dbmdl
+*.jfm
+*.pdb
+
+# Logs & temp files
+*.log
+*.tmp
+*.bak
+
+# Resharper / Sonar / Analyzers
+_ReSharper*/
+*.DotSettings.user
+.sonar/
+.idea/
+
+# VSCode
+.vscode/
+
+# Node / LibMan restored files
+node_modules/
+wwwroot/lib/
+
+# Backup & report files
+*.backup
+*.report
+
+# Others
+*.vspscc
+*.vssscc
+*.scc

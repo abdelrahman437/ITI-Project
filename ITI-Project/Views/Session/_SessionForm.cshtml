@@ -1,0 +1,34 @@
+﻿@model ITI_Project.DAL.Models.Session
+
+<input type="hidden" asp-for="SessionId" />
+
+            <div class="mb-3">
+                <label asp-for="CourseId" class="form-label fw-bold"></label>
+                @if (ViewBag.Courses != null)
+                {
+                    <select asp-for="CourseId" asp-items="ViewBag.Courses" class="form-select"></select>
+                }
+                <span asp-validation-for="CourseId" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="StartDate" class="form-label fw-bold"></label>
+    <input asp-for="StartDate" type="date" class="form-control"  />
+                <span asp-validation-for="StartDate" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="EndDate" class="form-label fw-bold"></label>
+    <input asp-for="EndDate" type="date" class="form-control"/>
+                <span asp-validation-for="EndDate" class="text-danger"></span>
+            </div>
+
+            <div class="d-flex justify-content-between">
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Back
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-save"></i> Save
+                </button>
+            </div>
+      

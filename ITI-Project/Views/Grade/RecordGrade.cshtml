@@ -1,0 +1,57 @@
+﻿@model ITI_Project.BLL.ViewModel.RecordGradeViewModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<h2>Record Grade for @Model.TraineeName</h2>
+
+<form asp-action="RecordGrade" method="post">
+    <input asp-for="TraineeId" type="hidden" />
+
+    <div class="mb-3">
+        <label asp-for="SelectedCourseId" class="form-label"></label>
+        <select asp-for="SelectedCourseId" class="form-select" id="courseDropdown" asp-items="Model.Courses">
+            <option value="">-- Select Course --</option>
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="SelectedSessionId" class="form-label"></label>
+        <select asp-for="SelectedSessionId" class="form-select" id="sessionDropdown">
+            <option value="">-- Select Session --</option>
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Value" class="form-label"></label>
+        <input asp-for="Value" class="form-control" />
+        <span asp-validation-for="Value" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-success">Save Grade</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#courseDropdown').change(function () {
+                var courseId = $(this).val();
+                var $session = $('#sessionDropdown');
+                $session.empty();
+                $session.append('<option value="">-- Select Session --</option>');
+
+                if (courseId) {
+                    $.getJSON('@Url.Action("GetSessionsByCourse", "Session")', { courseId: courseId }, function (data) {
+                        console.log(data); 
+                        $.each(data, function (i, s) {
+                            var start = new Date(s.startDate).toLocaleDateString();
+                            var end = new Date(s.endDate).toLocaleDateString();
+                            $session.append('<option value="' + s.sessionId + '">' + start + ' - ' + end + '</option>');
+                        });
+                    });
+                }
+            });
+        });
+    </script>
+}

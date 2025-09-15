@@ -1,0 +1,31 @@
+﻿@model ITI_Project.DAL.Models.Course
+@{
+    ViewData["Title"] = "Add New Course";
+    var instructors = ViewBag.Instructors as List<ITI_Project.DAL.Models.User>;
+}
+
+<div class="container py-5">
+    <h2 class="fw-bold mb-4">
+        <i class="bi bi-plus-circle"></i> Add New Course
+    </h2>
+
+    <form asp-action="Create" method="post" class="card shadow-sm p-4 rounded-4">
+
+
+        <partial name="_CourseForm" model="Model" />
+
+
+        <div class="d-flex justify-content-end gap-3 mt-4">
+            <button type="submit" class="btn btn-success px-4 py-2 rounded-pill shadow-sm">
+                <i class="bi bi-save"></i> Save
+            </button>
+            <a asp-action="Index" class="btn btn-outline-secondary px-4 py-2 rounded-pill shadow-sm">
+                <i class="bi bi-arrow-left"></i> Cancel
+            </a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

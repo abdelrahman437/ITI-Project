@@ -1,0 +1,98 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - ITI</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="icon" type="image/png" href="~/Images/ITIProject.png" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/ITI_Project.styles.css" asp-append-version="true" />
+</head>
+<body class="bg-light">
+    <!-- Navbar -->
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark shadow-sm"
+             style="background-color: #0d6efd;">
+            <div class="container">
+                <!-- Logo / Brand -->
+                <a class="navbar-brand fw-bold fs-4" asp-area="" asp-controller="Home" asp-action="Index">
+                    <i class="bi bi-mortarboard-fill"></i>  Training Management System
+                </a>
+
+                <!-- Toggler -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
+                        aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Navbar Links -->
+                <div class="collapse navbar-collapse" id="mainNavbar">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item"><a class="nav-link text-white fw-semibold" asp-controller="Home" asp-action="Index">Home</a></li>
+                        <li class="nav-item"><a class="nav-link text-white fw-semibold" asp-controller="Course" asp-action="Index">Courses</a></li>
+                        <li class="nav-item"><a class="nav-link text-white fw-semibold" asp-controller="Session" asp-action="Index">Sessions</a></li>
+                        <li class="nav-item"><a class="nav-link text-white fw-semibold" asp-controller="User" asp-action="Index">Users</a></li>
+                        <li class="nav-item"><a class="nav-link text-white fw-semibold" asp-controller="Grade" asp-action="Index">Grades</a></li>
+                    </ul>
+
+                    <div class="d-flex ms-lg-3">
+                        <a href="#"class="btn btn-outline-light rounded-pill me-2 px-3">Login</a>
+                        <a href="#" class="btn btn-light rounded-pill px-3">Sign Up</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+
+
+    <!-- Main Content -->
+    <div class="container mt-4">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center text-lg-start text-white"
+            style="background-color: #0b5ed7;">
+        <div class="container p-4">
+            <div class="row">
+                <div class="col-lg-6 col-md-12 mb-4 mb-md-0 text-start">
+                    <h5 class="text-uppercase fw-bold mb-3">ITI Project</h5>
+                    <p>Training Management System to manage Courses, Sessions, Users, and Grades efficiently.</p>
+                </div>
+
+                <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
+                    <h6 class="text-uppercase fw-bold mb-3">Quick Links</h6>
+                    <ul class="list-unstyled">
+                        <li><a asp-controller="Course" asp-action="Index" class="text-white text-decoration-none">Courses</a></li>
+                        <li><a asp-controller="Session" asp-action="Index" class="text-white text-decoration-none">Sessions</a></li>
+                        <li><a asp-controller="User" asp-action="Index" class="text-white text-decoration-none">Users</a></li>
+                        <li><a asp-controller="Grade" asp-action="Index" class="text-white text-decoration-none">Grades</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
+                    <h6 class="text-uppercase fw-bold mb-3">Contact</h6>
+                    <p><i class="bi bi-envelope me-2"></i> support@itiproject.com</p>
+                    <p><i class="bi bi-telephone me-2"></i> +20 123 456 789</p>
+                </div>
+            </div>
+        </div>
+        <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+            © @DateTime.Now.Year - ITI_Project | Built with <i class="bi bi-heart-fill text-danger"></i> & Bootstrap 5
+        </div>
+    </footer>
+
+
+    <!-- Scripts -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,62 @@
+﻿@model ITI_Project.BLL.ViewModel.SessionViewModel
+
+@{
+    ViewData["Title"] = "Session Details";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-3">📅 Session Details</h2>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <p><strong>📚 Course:</strong> @Model.CourseName</p>
+            <p><strong>📅 Start Date:</strong> @Model.StartDate.ToString("dd/MM/yyyy")</p>
+            <p><strong>📅 End Date:</strong> @Model.EndDate.ToString("dd/MM/yyyy")</p>
+        </div>
+    </div>
+
+    <h4 class="mb-3">👥 Trainees</h4>
+    @if (Model.trainee.Any())
+    {
+        <div class="card shadow-sm">
+            <div class="card-body p-0" style="max-height: 400px; overflow-y: auto;">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-primary sticky-top">
+                        <tr>
+                            <th>#</th>
+                            <th>👤 Name</th>
+                            <th>📧 Email</th>
+                            <th class="text-center">🆔 ID</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var t in Model.trainee.Select((value, index) => new { value, index }))
+                        {
+                            <tr>
+                                <td>@(t.index + 1)</td>
+                                <td><strong>@t.value.Name</strong></td>
+                                <td>@t.value.Email</td>
+                                <td class="text-center">
+                                    <span class="badge bg-primary">@t.value.UserId</span>
+                                </td>   
+                            </tr>
+                            
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-warning text-center">
+            ⚠ No trainees found for this session.
+        </div>
+    }
+
+    <div class="mt-4">
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to List
+        </a>
+    </div>
+</div>

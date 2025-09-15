@@ -1,0 +1,27 @@
+﻿@model ITI_Project.DAL.Models.Course
+@{
+    var instructors = ViewBag.Instructors as List<ITI_Project.DAL.Models.User>;
+}
+<div class="mb-3">
+    <label asp-for="Name" class="form-label"></label>
+    <input asp-for="Name" class="form-control" placeholder="Enter course name..." />
+    <span asp-validation-for="Name" class="text-danger"></span>
+</div>
+
+<div class="mb-3">
+    <label asp-for="Category" class="form-label"></label>
+    <input asp-for="Category" class="form-control" placeholder="Enter category..." />
+    <span asp-validation-for="Category" class="text-danger"></span>
+</div>
+
+<div class="mb-3">
+    <label asp-for="InstructorId" class="form-label">Instructor</label>
+    <select asp-for="InstructorId" class="form-select">
+        <option value="">-- Select Instructor --</option>
+        @foreach (var instructor in instructors ?? new List<ITI_Project.DAL.Models.User>())
+        {
+            <option value="@instructor.UserId">@instructor.Name</option>
+        }
+    </select>
+    <span asp-validation-for="InstructorId" class="text-danger"></span>
+</div>

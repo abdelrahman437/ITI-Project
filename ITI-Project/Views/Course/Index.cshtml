@@ -1,0 +1,160 @@
+﻿@using ITI_Project.BLL.Helpers
+@using ITI_Project.BLL.ViewModel
+@model Pagination<CourseViewModel>
+
+@{
+    ViewData["Title"] = "Courses";
+    var categories = ViewBag.Categories as IEnumerable<string>;
+    var selectedCategory = ViewBag.SelectedCategory as string;
+    var search = ViewBag.Search as string;
+    var page = Model.PageIndex;
+
+    var remainingItems = Model.Count - 1;
+
+
+    bool currentPageWouldBeEmpty = remainingItems >= 0 && remainingItems % Model.PageSize == 0;
+
+    if (currentPageWouldBeEmpty && !Model.HasNextPage && Model.HasPreviousPage)
+    {
+        page--;
+    }
+
+}
+
+<style>
+    .category-badge {
+        background: linear-gradient(135deg, #6c63ff, #5a52e0);
+        color: white;
+        border-radius: 12px;
+        padding: 6px 12px;
+        font-weight: 600;
+        display: inline-block;
+        font-size: 0.85rem;
+    }
+
+    .course-card {
+        transition: all 0.3s ease;
+        border-radius: 16px;
+    }
+
+        .course-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+    /* نخلي الأزرار بنفس الحجم وتاخد العرض */
+    .course-actions a {
+        flex: 1;
+        text-align: center;
+    }
+</style>
+
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-dark mb-0">
+            <i class="bi bi-mortarboard-fill"></i> Courses
+        </h2>
+        <a asp-action="Create" class="btn btn-success px-4 py-2 shadow rounded-pill">
+            <i class="bi bi-plus-circle me-2"></i> Add Course
+        </a>
+    </div>
+
+    <form method="get" class="row gy-3 gx-3 align-items-center mb-5 p-4 rounded-4 shadow-sm bg-white">
+        <div class="col-lg-5">
+            <input type="text" name="search" value="@search" class="form-control form-control-lg"
+                   placeholder="🔍 Search courses..." />
+        </div>
+        <div class="col-lg-5">
+            <select name="category" class="form-select form-select-lg" onchange="this.form.submit()">
+                <option value="">-- All Categories --</option>
+                @foreach (var cat in categories)
+                {
+                    <option value="@cat" selected="@(cat == selectedCategory)">
+                        @cat
+                    </option>
+                }
+            </select>
+        </div>
+        <div class="col-lg-2 text-lg-end">
+            <button type="submit" class="btn btn-primary btn-lg w-100">
+                <i class="bi bi-search"></i> Search
+            </button>
+        </div>
+    </form>
+
+    @if (Model.Any())
+    {
+        <div class="row g-4">
+            @foreach (var course in Model)
+            {
+                <div class="col-md-6 col-lg-4">
+                    <div class="course-card card h-100 border-0 shadow-sm">
+                        <div class="card-body d-flex flex-column">
+                            <div class="mb-3">
+                                <span class="category-badge">@course.Category</span>
+                            </div>
+
+                            <h5 class="card-title fw-bold text-dark">@course.Name</h5>
+
+                            <p class="text-muted mb-3">
+                                <i class="bi bi-person-circle me-1"></i>
+                                @(course.InstructorName)
+                            </p>
+
+                            <!-- الأزرار في الأسفل وعلى اليمين -->
+                            <div class="mt-auto d-flex gap-2 justify-content-end course-actions">
+                                <a asp-action="GetById" asp-route-id="@course.CourseId"
+                                   class="btn btn-outline-primary btn-sm rounded-pill d-flex align-items-center justify-content-center gap-1 shadow-sm"
+                                   title="View Details">
+                                    <i class="bi bi-eye"></i> Details
+                                </a>
+                                <a asp-action="Edit" asp-route-id="@course.CourseId"
+                                   class="btn btn-outline-warning btn-sm rounded-pill d-flex align-items-center justify-content-center gap-1 shadow-sm"
+                                   title="Edit">
+                                    <i class="bi bi-pencil"></i> Edit
+                                </a>
+                                <form asp-action="Delete"
+                                asp-route-id="@course.CourseId" asp-route-pagenumber="@(page)"
+                                    method="post" class="d-inline"
+                                      onsubmit="return confirm('Are you sure you want to delete this course?');">
+                                    <button type="submit"
+                                            class="btn btn-outline-danger btn-sm rounded-pill d-flex align-items-center justify-content-center gap-1 shadow-sm"
+                                            title="Delete">
+                                        <i class="bi bi-trash"></i> Delete
+                                    </button>
+                                </form>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <nav class="mt-4">
+            <ul class="pagination justify-content-center">
+                <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                    <a class="page-link" asp-route-page="@(Model.PageIndex - 1)" asp-route-search="@search" asp-route-category="@selectedCategory">Previous</a>
+                </li>
+
+                @for (int i = 1; i <= Model.TotalPages; i++)
+                {
+                    <li class="page-item @(i == Model.PageIndex ? "active" : "")">
+                        <a class="page-link" asp-route-page="@i" asp-route-search="@search" asp-route-category="@selectedCategory">@i</a>
+                    </li>
+                }
+
+                <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                    <a class="page-link" asp-route-page="@(Model.PageIndex + 1)" asp-route-search="@search" asp-route-category="@selectedCategory">Next</a>
+                </li>
+            </ul>
+        </nav>
+    }
+    else
+    {
+        <div class="text-center text-muted mt-5">
+            <i class="bi bi-emoji-frown fs-1"></i>
+            <p class="mt-3 fs-5">No courses found.</p>
+        </div>
+    }
+</div>

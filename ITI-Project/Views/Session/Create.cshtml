@@ -1,0 +1,28 @@
+﻿@model ITI_Project.DAL.Models.Session
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg rounded-3">
+    <div class="card-header bg-primary text-white text-center">
+        <h4 class="mb-0">
+
+                <i class="bi bi-plus-circle"></i>
+                <span> Create New Session</span>
+
+        </h4>
+    </div>
+    <div class="card-body">
+        <form asp-action="Create" method="post">
+                        <partial name="_SessionForm" model="Model" />
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

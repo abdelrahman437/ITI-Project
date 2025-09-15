@@ -1,0 +1,76 @@
+﻿@using ITI_Project.DAL.Models.Enums
+@model ITI_Project.BLL.ViewModel.UserViewModel
+
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">👤 @Model.Name - Details</h4>
+        </div>
+        <div class="card-body">
+            <p><strong>Email:</strong> @Model.Email</p>
+            <p><strong>Role:</strong> <span class="badge bg-secondary">@Model.Role</span></p>
+
+            @if (Model.Role == UserRole.Trainee)
+            {
+                <hr />
+                <h5>📚 Grades</h5>
+                @if (Model.grades.Any())
+                {
+                    <table class="table table-bordered table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Course</th>
+                                <th>Session</th>
+                                <th>Start</th>
+                                <th>End</th>
+                                <th>Grade</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var g in Model.grades)
+                            {
+                                <tr>
+                                    <td>@g.CourseName</td>
+                                    <td>#@g.SessionId</td>
+                                    <td>@g.StartDate.ToString("dd/MM/yyyy")</td>
+                                    <td>@g.EndDate.ToString("dd/MM/yyyy")</td>
+                                    <td><span class="badge bg-success">@g.Value</span></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <p class="text-muted">No grades found.</p>
+                }
+            }
+            else if (Model.Role == UserRole.Instructor)
+            {
+                <hr />
+                <h5>📖 Courses Taught</h5>
+                @if (Model.Courses.Any())
+                {
+                    <ul class="list-group">
+                        @foreach (var c in Model.Courses)
+                        {
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                @c.Name
+                                <span class="badge bg-primary">ID: @c.CourseId</span>
+                            </li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <p class="text-muted">No courses assigned.</p>
+                }
+            }
+        </div>
+        <div class="card-footer text-end">
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Back
+            </a>
+        </div>
+    </div>
+</div>
