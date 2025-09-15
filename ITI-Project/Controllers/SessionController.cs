@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using ITI_Project.BLL.Interfaces;
 using ITI_Project.BLL.Services.Interfaces;
-using ITI_Project.BLL.ViewModel;
 using ITI_Project.DAL.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -13,18 +12,19 @@ namespace ITI_Project.Controllers
     {
         private readonly ISessionService _sessionService;
         private readonly ICourseService _courseService;
+
         public SessionController(ISessionService sessionService, ICourseService courseService)
         {
             _sessionService = sessionService;
             _courseService = courseService;
         }
-        public async Task<IActionResult> Index(string search, int page = 1, int? pagesize = null)
-        {
-            var x = await _sessionService.GetAllAsync(search, page, pagesize);
-            ViewBag.Search = search;
-            return View(x);
-        }
 
+        public async Task<IActionResult> Index(string? search, int page = 1, int? pagesize = null)
+        {
+            var sessions = await _sessionService.GetAllAsync(search, page, pagesize);
+            ViewBag.Search = search;
+            return View(sessions);
+        }
 
         public async Task<IActionResult> Create()
         {
@@ -46,21 +46,36 @@ namespace ITI_Project.Controllers
                 return View(model);
             }
 
-
-
-            await _sessionService.CreateSessionAsync(model);
-            TempData["SuccessMessage"] = "Session created successfully!";
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                var created = await _sessionService.CreateSessionAsync(model);
+                if (created)
+                {
+                    TempData["SuccessMessage"] = "Session created successfully!";
+                    return RedirectToAction(nameof(Index));
+                }
+                TempData["ErrorMessage"] = "Failed to create session.";
+                ViewBag.Courses = new SelectList(await _courseService.GetAllAsync(), "CourseId", "Name", model.CourseId);
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error occurred while creating session: {ex.Message}";
+                ViewBag.Courses = new SelectList(await _courseService.GetAllAsync(), "CourseId", "Name", model.CourseId);
+                return View(model);
+            }
         }
-
 
         public async Task<IActionResult> Edit(int id)
         {
             var session = await _sessionService.GetSessionAsync(id);
-            if (session == null) return NotFound();
+            if (session == null)
+            {
+                TempData["ErrorMessage"] = "Session not found.";
+                return RedirectToAction(nameof(Index));
+            }
 
-            ViewBag.Courses = new SelectList(await _courseService.GetAllAsync(), "CourseId", "Name");
-
+            ViewBag.Courses = new SelectList(await _courseService.GetAllAsync(), "CourseId", "Name", session.CourseId);
             return View(session);
         }
 
@@ -68,45 +83,49 @@ namespace ITI_Project.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Session model)
         {
-            ViewBag.Courses = new SelectList(await _courseService.GetAllAsync(), "CourseId", "Name");
+            ViewBag.Courses = new SelectList(await _courseService.GetAllAsync(), "CourseId", "Name", model.CourseId);
+
             if (!ModelState.IsValid)
-            {
                 return View(model);
-            }
 
             try
             {
-                var result = await _sessionService.UpdateSessionAsync(model);
-                if (!result)
+                var updated = await _sessionService.UpdateSessionAsync(model);
+                if (updated)
                 {
-                    ModelState.AddModelError("", "Could not update session.");
-                    return View(model);
+                    TempData["SuccessMessage"] = "Session updated successfully!";
+                    return RedirectToAction(nameof(Index));
                 }
 
-                TempData["SuccessMessage"] = "Session updated successfully!";
-                return RedirectToAction(nameof(Index));
+                TempData["ErrorMessage"] = "Could not update session. It may not exist.";
+                return View(model);
             }
             catch (Exception ex)
             {
-                // تسجل الخطأ في Logs (ممكن تستخدم ILogger)
-                ModelState.AddModelError("", $"An error occurred while updating the session: {ex.Message}");
+                TempData["ErrorMessage"] = $"Error occurred while updating session: {ex.Message}";
                 return View(model);
             }
         }
-
 
         [HttpPost]
         public async Task<IActionResult> Delete(int id, int pagenumber = 1)
         {
             try
             {
-                await _sessionService.DeleteSessionAsync(id);
-                TempData["SuccessMessage"] = "Session deleted successfully!";
+                var deleted = await _sessionService.DeleteSessionAsync(id);
+                TempData["SuccessMessage"] = deleted
+                    ? "Session deleted successfully!"
+                    : "Session not found.";
             }
             catch (DbUpdateException)
             {
                 TempData["ErrorMessage"] = "Unable to delete session. It may be related to other data.";
             }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Error occurred while deleting session: {ex.Message}";
+            }
+
             return RedirectToAction(nameof(Index), new { page = pagenumber });
         }
 
@@ -115,11 +134,13 @@ namespace ITI_Project.Controllers
             var session = await _sessionService.GetSessionAsyncVM(id);
             if (session == null)
             {
-                return NotFound();
+                TempData["ErrorMessage"] = "Session not found.";
+                return RedirectToAction(nameof(Index));
             }
 
             return View(session);
         }
+
         [HttpGet]
         public async Task<JsonResult> GetSessionsByCourse(int courseId)
         {
@@ -132,6 +153,5 @@ namespace ITI_Project.Controllers
             });
             return Json(result);
         }
-
     }
 }

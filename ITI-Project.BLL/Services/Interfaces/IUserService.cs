@@ -17,7 +17,7 @@ namespace ITI_Project.BLL.Services.Interfaces
         Task<User?> GetByIdAsync(int id);
         Task<UserViewModel?> GetByIdAsyncVM(int id);
         Task<User> AddAsync(User user);
-        Task<User> UpdateAsync(User user);
+        Task<User?> UpdateAsync(User user);
         Task<bool> DeleteAsync(int id);
         Task<bool> IsEmailUniqueAsync(string email, int? userId = null);
     }

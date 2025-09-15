@@ -11,27 +11,38 @@ namespace ITI_Project.Controllers
     {
         private readonly IGradeService _gradeService;
         private readonly ICourseService _courseService;
-        private readonly IUserService _UserService;
+        private readonly IUserService _userService;
 
         public GradeController(IGradeService gradeService, ICourseService courseService, IUserService userService)
         {
             _gradeService = gradeService;
             _courseService = courseService;
-            _UserService = userService;
+            _userService = userService;
         }
 
-        public async Task<IActionResult> Index(int? size = null ,int pageNumber = 1)
+        public async Task<IActionResult> Index(int? size = null, int pageNumber = 1)
         {
-            var model = await _gradeService.UsersWithGrades(pageNumber,size);
-            return View(model);
+            try
+            {
+                var model = await _gradeService.UsersWithGrades(pageNumber, size);
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"Failed to load grades: {ex.Message}";
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         [HttpGet]
         public async Task<IActionResult> RecordGrade(int traineeId)
         {
-            var trainee = await _UserService.GetByIdAsync(traineeId);
+            var trainee = await _userService.GetByIdAsync(traineeId);
             if (trainee == null)
-                return NotFound();
+            {
+                TempData["ErrorMessage"] = "Trainee not found.";
+                return RedirectToAction(nameof(Index));
+            }
 
             var courses = await _courseService.GetCoursesName();
             var courseListItems = courses.Select(c => new SelectListItem
@@ -39,7 +50,6 @@ namespace ITI_Project.Controllers
                 Value = c.CourseId.ToString(),
                 Text = c.Name
             }).ToList();
-
 
             var model = new RecordGradeViewModel
             {
@@ -58,22 +68,27 @@ namespace ITI_Project.Controllers
             if (!ModelState.IsValid || model.Value < 0 || model.Value > 100)
             {
                 ModelState.AddModelError("Value", "Grade must be between 0 and 100");
+                TempData["ErrorMessage"] = "Invalid grade value.";
                 return RedirectToAction(nameof(RecordGrade), new { model.TraineeId });
             }
 
             try
             {
                 await _gradeService.AddGradeAsync(model.TraineeId, model.SelectedSessionId, model.Value);
+                TempData["SuccessMessage"] = "Grade recorded successfully!";
+                return RedirectToAction(nameof(Index));
             }
             catch (ArgumentOutOfRangeException ex)
             {
                 ModelState.AddModelError("Value", ex.Message);
+                TempData["ErrorMessage"] = ex.Message;
                 return RedirectToAction(nameof(RecordGrade), new { model.TraineeId });
             }
-
-            return RedirectToAction("Index");
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"An error occurred while saving grade: {ex.Message}";
+                return RedirectToAction(nameof(RecordGrade), new { model.TraineeId });
+            }
         }
-
-
     }
 }
